@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+    <title>RenderIt gem</title>
+    <link rel="stylesheet" href="/stylesheets/all.css" type="text/css" media="all" />
+  </head>  
+  <body>
+    <div class="header">
+  <h1>Rails Notes</h1>
+  <ul class="nav">
+    <li><a href="/">Home</a>
+    <li><a href="/tags.html">Tags</a>
+  </ul>      
+  <div style="clear: both;"></div>
+</div>
+
+    <div class="site">
+      <div class="date">
+  <div class="day">12</div>
+  <div class="month">AUG</div>
+</div>
+
+      <h2>RenderIt gem</h2>
+      
+  
+    <a class="tag" href="/tags.html#renderit">renderit</a>
+  
+    <a class="tag" href="/tags.html#gem">gem</a>
+  
+    <a class="tag" href="/tags.html#html5">html5</a>
+  
+    <a class="tag" href="/tags.html#css3">css3</a>
+  
+
+
+      <p>At the moment browsers are moving forward to html5/css3. But it will take time for users to use html5/css3 browsers only. At the moment about 60% of users are using Internet Explorer (stable version of IE doesn&#8217;t support html5/css3). This problem forces developers to forget about new features brought by new browsers and develop websites same way as they did it years and years ago. Aim of RenderIt gem is to solve this problem. <!-- Preview --></p>
+
+<p>This issue can be solved in several ways:</p>
+
+<ol>
+<li>Avoid using html5/css3 features. But in this case users that are using modern browsers won&#8217;t have that user expirience they could have</li>
+
+<li>Ignore old browsers. But in this case more than 60% of internet users won&#8217;t be able to use your service</li>
+
+<li>Render most of elements on the client-side with javascript depending on browser version. We can even use GWT to fetch only javascript for our browser (not for all the other browsers also). But create and support such javascript is enough complicated task and there could be issues with search engines as most of your content will be generated with javascript after load.</li>
+
+<li>Give users different pages depending on browser they are running. This can be accomplished by parsing <strong>user_agent</strong> that is send in the header when user makes request.</li>
+</ol>
+
+<p>RenderIt gem makes last thing. You will be able to have different views and layouts for different browsers. To start using this gem you need to install it</p>
+<div class='highlight'><pre><code class='bash'>gem install renderit
+</code></pre>
+</div>
+<p>After this you need to require this gem in your rails application.</p>
+
+<h4 id='rails_2_configuration'>Rails 2 configuration</h4>
+
+<p>If you are using rails 2.3.*, you will need to add following string to your <strong>environment.rb</strong> file:</p>
+<div class='highlight'><pre><code class='ruby'><span class='n'>config</span><span class='o'>.</span><span class='n'>gem</span> <span class='s1'>&#39;renderit&#39;</span>
+</code></pre>
+</div>
+<h4 id='rails_3_configuration'>Rails 3 configuration</h4>
+
+<p>If you are using rails 3 already, you should add following line to your Gemfile</p>
+<div class='highlight'><pre><code class='ruby'><span class='n'>gem</span> <span class='s1'>&#39;renderit&#39;</span>
+</code></pre>
+</div>
+<p>and create renderit.rb file in <strong>config/initializers</strong> folder with following content</p>
+<div class='highlight'><pre><code class='ruby'><span class='no'>RenderIt</span><span class='o'>.</span><span class='n'>load_config</span>
+</code></pre>
+</div>
+<h4 id='renderit_configuration'>RenderIt configuration</h4>
+
+<p>To configure browser-specific templates, <strong>config/renderit.yml</strong> file has to be created. In this file you can specify template names for specific browsers in the following way</p>
+<div class='highlight'><pre><code class='yaml'><span class='l-Scalar-Plain'>template</span><span class='p-Indicator'>:</span>
+        <span class='l-Scalar-Plain'>new</span><span class='p-Indicator'>:</span> <span class='l-Scalar-Plain'>chrome&gt;=4, opera&gt;=10.5, firefox&gt;=3.5, safari&gt;=4</span>
+        <span class='l-Scalar-Plain'>mobile</span><span class='p-Indicator'>:</span> <span class='l-Scalar-Plain'>safarimobile&gt;=3</span>
+</code></pre>
+</div>
+<p>In yaml file defining template name for specific browsers you can use all characters for comparing (you can skip &#8216;==&#8217; sign if you want and write ie6 instead of ie==6 ).</p>
+
+<p>After this if I will use Chrome5 and will request some page (/users/new for example) and in views folder <strong>users/new_new.html.erb</strong> file will be present - it will be rendered, not the default one. Same thing with layouts. If there will be no file with &#8216;_new&#8217; postfix - the default view will be rendered. This way you will be able to create different html files for different browsers and will be able to use all new html5/css3 features if browser supports this.</p>
+      <div id="page-navigation"> 
+        <div class="clear">&nbsp;</div> 
+        <div class="left"> 
+          <a href="#" title="" class="no_follow">&larr; Next</a>
+        </div> 
+
+        <div class="right"> 
+          <a href="#" title="" class="no_follow">Previous &rarr;</a>
+        </div> 
+
+        <div class="clear">&nbsp;</div> 
+</div> 
+
+    </div>
+
+  </body>
+</html>
