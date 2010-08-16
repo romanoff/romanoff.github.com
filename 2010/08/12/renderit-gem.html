@@ -33,7 +33,7 @@
   
 
 
-      <p>At the moment browsers are moving forward to html5/css3. But it will take time for users to use html5/css3 browsers only. At the moment about 60% of users are using Internet Explorer (stable version of IE doesn&#8217;t support html5/css3). This problem forces developers to forget about new features brought by new browsers and develop websites same way as they did it years and years ago. Aim of RenderIt gem is to solve this problem. <!-- Preview --></p>
+      <p>At the moment browsers are moving forward to <a href='http://www.html5rocks.com/'>html5</a>/<a href='http://www.css3.info/preview/'>css3</a>. But it will take time for users to use html5/css3 browsers only. At the moment about 60% of users are using Internet Explorer (stable version of IE doesn&#8217;t support html5/css3). This problem forces developers to forget about new features brought by new browsers and develop websites same way as they did it years and years ago. Aim of RenderIt gem is to solve this problem. <!-- Preview --></p>
 
 <p>This issue can be solved in several ways:</p>
 
@@ -44,7 +44,7 @@
 
 <li>Render most of elements on the client-side with javascript depending on browser version. We can even use GWT to fetch only javascript for our browser (not for all the other browsers also). But create and support such javascript is enough complicated task and there could be issues with search engines as most of your content will be generated with javascript after load.</li>
 
-<li>Give users different pages depending on browser they are running. This can be accomplished by parsing <strong>user_agent</strong> that is send in the header when user makes request.</li>
+<li>Give users different pages depending on browser they are running. This can be accomplished by parsing <code>user_agent</code> that is send in the header when user makes request.</li>
 </ol>
 
 <p>RenderIt gem makes last thing. You will be able to have different views and layouts for different browsers. To start using this gem you need to install it</p>
@@ -53,25 +53,9 @@
 </div>
 <p>After this you need to require this gem in your rails application.</p>
 
-<h4 id='rails_2_configuration'>Rails 2 configuration</h4>
-
-<p>If you are using rails 2.3.*, you will need to add following string to your <strong>environment.rb</strong> file:</p>
-<div class='highlight'><pre><code class='ruby'><span class='n'>config</span><span class='o'>.</span><span class='n'>gem</span> <span class='s1'>&#39;renderit&#39;</span>
-</code></pre>
-</div>
-<h4 id='rails_3_configuration'>Rails 3 configuration</h4>
-
-<p>If you are using rails 3 already, you should add following line to your Gemfile</p>
-<div class='highlight'><pre><code class='ruby'><span class='n'>gem</span> <span class='s1'>&#39;renderit&#39;</span>
-</code></pre>
-</div>
-<p>and create renderit.rb file in <strong>config/initializers</strong> folder with following content</p>
-<div class='highlight'><pre><code class='ruby'><span class='no'>RenderIt</span><span class='o'>.</span><span class='n'>load_config</span>
-</code></pre>
-</div>
 <h4 id='renderit_configuration'>RenderIt configuration</h4>
 
-<p>To configure browser-specific templates, <strong>config/renderit.yml</strong> file has to be created. In this file you can specify template names for specific browsers in the following way</p>
+<p>To configure browser-specific templates, <code>config/renderit.yml</code> file has to be created. In this file you can specify template names for specific browsers in the following way</p>
 <div class='highlight'><pre><code class='yaml'><span class='l-Scalar-Plain'>template</span><span class='p-Indicator'>:</span>
         <span class='l-Scalar-Plain'>new</span><span class='p-Indicator'>:</span> <span class='l-Scalar-Plain'>chrome&gt;=4, opera&gt;=10.5, firefox&gt;=3.5, safari&gt;=4</span>
         <span class='l-Scalar-Plain'>mobile</span><span class='p-Indicator'>:</span> <span class='l-Scalar-Plain'>safarimobile&gt;=3</span>
@@ -79,7 +63,34 @@
 </div>
 <p>In yaml file defining template name for specific browsers you can use all characters for comparing (you can skip &#8216;==&#8217; sign if you want and write ie6 instead of ie==6 ).</p>
 
-<p>After this if I will use Chrome5 and will request some page (/users/new for example) and in views folder <strong>users/new_new.html.erb</strong> file will be present - it will be rendered, not the default one. Same thing with layouts. If there will be no file with &#8216;_new&#8217; postfix - the default view will be rendered. This way you will be able to create different html files for different browsers and will be able to use all new html5/css3 features if browser supports this.</p>
+<p>After this if I will use Chrome5 and will request some page (/users/new for example) and in views folder <code>users/new_new.html.erb</code> file will be present - it will be rendered, not the default one. Same thing with layouts. If there will be no file with &#8216;_new&#8217; postfix - the default view will be rendered.</p>
+
+<h4 id='customizing_browser_determination'>Customizing browser determination</h4>
+
+<p>By default following regular expressions are used to determine browser name and browser version:</p>
+<div class='highlight'><pre><code class='ruby'><span class='no'>DEFAULT_BROWSERS_CONFIG</span> <span class='o'>=</span> <span class='p'>{</span>
+    <span class='s1'>&#39;ie&#39;</span> <span class='o'>=&gt;</span> <span class='s1'>&#39;msie (\d+\.\d).*\)(?!\s*opera)&#39;</span><span class='p'>,</span> 
+    <span class='s1'>&#39;firefox&#39;</span> <span class='o'>=&gt;</span> <span class='s1'>&#39;gecko.*?firefox\/(\d+\.\d)&#39;</span><span class='p'>,</span> 
+    <span class='s1'>&#39;chrome&#39;</span> <span class='o'>=&gt;</span> <span class='s1'>&#39;applewebkit.*?chrome\/(\d+\.\d)&#39;</span><span class='p'>,</span> 
+    <span class='s1'>&#39;safari&#39;</span> <span class='o'>=&gt;</span> <span class='s1'>&#39;applewebkit.*?version\/(\d+.\d)(?![.\d\s]*mobile)&#39;</span><span class='p'>,</span>    
+    <span class='s1'>&#39;safarimobile&#39;</span> <span class='o'>=&gt;</span> <span class='s1'>&#39;applewebkit.*?version\/(\d+.\d)[.\d\s]*mobile.*?safari&#39;</span><span class='p'>,</span> 
+    <span class='s1'>&#39;opera&#39;</span> <span class='o'>=&gt;</span> <span class='s1'>&#39;opera.*?version\/(\d+\.\d)&#39;</span> 
+  <span class='p'>}</span>
+</code></pre>
+</div>
+<p>In this hash keys are browser names and values are regular expressions that are used to determine browser version. First value in round brackets will be considered browser version. To check work of regular expressions we can use <a href='http://rubular.com/'>Rubular</a> website. Following <a href='http://rubular.com/r/YUuq6bN65i'>this</a> link you will see regular expression for Chome (<em>i</em> on the right means that regular expression is case insensitive) and test string with <code>user_agent</code> of Chrome6 browser. As you see in &#8216;Match captures&#8217; block, browser version is right. If you want to change regular expression for browser determination, you can add following lines to <code>config/renderit.yml</code> file</p>
+<div class='highlight'><pre><code class='yaml'><span class='l-Scalar-Plain'>browsers</span><span class='p-Indicator'>:</span>
+        <span class='l-Scalar-Plain'>konqueror</span><span class='p-Indicator'>:</span> <span class='l-Scalar-Plain'>konqueror\/(\d+\.\d)</span>
+</code></pre>
+</div>
+<p>After this you will be able to create konqueror- specific templates.</p>
+<div class='highlight'><pre><code class='yaml'><span class='l-Scalar-Plain'>templates</span><span class='p-Indicator'>:</span>
+        <span class='l-Scalar-Plain'>konq</span><span class='p-Indicator'>:</span> <span class='l-Scalar-Plain'>konqueror&gt;3.4</span>
+</code></pre>
+</div>
+<p>If you think that regular expressions that are used to determine browsers are wrong - you can change them as <em>DEFAULT_BROWSERS_CONFIG</em> is merged with browsers information provided by user. If so - please let me know by creating an <a href='http://github.com/romanoff/renderit/issues'>issue</a>.</p>
+
+<p>With this gem you will be able to create different html files for different browsers. This will let you use html5/css3 if browser supports this.</p>
       <div id="page-navigation"> 
         <div class="clear">&nbsp;</div> 
         <div class="left"> 
