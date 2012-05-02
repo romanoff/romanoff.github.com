@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test friendly gem</title>
+    <link rel="stylesheet" href="/stylesheets/all.css" type="text/css" media="all" />
+  </head>  
+  <body>
+    <div class="header">
+  <h1>Rails Notes</h1>
+  <ul class="nav">
+    <li><a href="/">Home</a>
+    <li><a href="/tags.html">Tags</a>
+  </ul>      
+  <div style="clear: both;"></div>
+</div>
+
+    <div class="site">
+      <div class="date">
+  <div class="day"> 1</div>
+  <div class="month">MAY</div>
+</div>
+
+      <h2>Test friendly gem</h2>
+      
+  
+    <a class="tag" href="/tags.html#tests">tests</a>
+  
+    <a class="tag" href="/tags.html#validations">validations</a>
+  
+    <a class="tag" href="/tags.html#callbacks">callbacks</a>
+  
+    <a class="tag" href="/tags.html#gem">gem</a>
+  
+
+
+      <p>Validations in rails are easy to use. Even if some custom validations have to be created, there is generic way to do it and create <a href='http://guides.rubyonrails.org/active_record_validations_callbacks.html#performing-custom-validations'>custom validators</a>. The problems might appear when model instances have to be tested. Even though unit tests usually cover behavior of an instances, not validations, they are still executed in every test. Usually not to create valid objects evey time by hand, people use fixtures or factories. This way people don&#8217;t have to think about validations and tests are close to real environment (although probably validations don&#8217;t have to be tested at all or only custom ones). But the real problems appear when in order to create one valid object, lots of other objects have to be created first. This is fine if we check interconnections between those objects. But if not &#8230; setup becomes pretty painful. <!-- Preview --> Test friendly gem aims to solve this problem. Installation is as easy as</p>
+<div class='highlight'><pre><code class='bash'>gem install test_friendly
+</code></pre>
+</div>
+<p>Here is an example of model using it:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='c1'># Fields present in model:</span>
+  <span class='c1'># first_name, last_name</span>
+  <span class='k'>class</span> <span class='nc'>User</span> <span class='o'>&lt;</span> <span class='no'>ActiveRecord</span><span class='o'>::</span><span class='no'>Base</span>
+    <span class='n'>acts_as_test_friendly</span>
+  
+    <span class='n'>test_friendly_validations</span> <span class='k'>do</span>
+      <span class='n'>validates_presence_of</span> <span class='ss'>:first_name</span><span class='p'>,</span> <span class='ss'>:last_name</span>
+    <span class='k'>end</span>
+  
+  <span class='k'>end</span>
+</code></pre>
+</div>
+<p>Defining validations in <code>test_friendly_validations</code> block makes validations work in <strong>development</strong> and <strong>production</strong> environments, but turned off in <strong>test</strong> environment. Validations will have to be turned on manually in tests. To turn <strong>User</strong> validations on, <code>User.force_validations</code> method has to be used.</p>
+
+<p>By default validations will be dropped before every rspec test. But other in other testing frameworks <code>User.drop_validations</code> method will have to be used. This way validations can be turned off.</p>
+
+<p>You also might want to test different validations in different tests. In this case you might want to turn on only specific one. Luckily test friendly gem provides this functionality as well. Here is an example:</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='c1'># Fields present in model:</span>
+  <span class='c1'># first_name, last_name, new_attribute, default_field</span>
+  <span class='k'>class</span> <span class='nc'>User</span> <span class='o'>&lt;</span> <span class='no'>ActiveRecord</span><span class='o'>::</span><span class='no'>Base</span>
+    <span class='n'>acts_as_test_friendly</span>
+
+    <span class='n'>test_friendly_validations</span> <span class='k'>do</span>
+      <span class='n'>validates_presence_of</span> <span class='ss'>:default_field</span>
+    <span class='k'>end</span>
+  
+    <span class='n'>test_friendly_validations</span><span class='p'>(</span><span class='ss'>:basic</span><span class='p'>)</span> <span class='k'>do</span>
+      <span class='n'>validates_presence_of</span> <span class='ss'>:first_name</span><span class='p'>,</span> <span class='ss'>:last_name</span>
+    <span class='k'>end</span>
+
+    <span class='n'>test_friendly_validations</span><span class='p'>(</span><span class='ss'>:additional</span><span class='p'>)</span> <span class='k'>do</span>
+      <span class='n'>validates_presence_of</span> <span class='ss'>:new_attribute</span>
+    <span class='k'>end</span>
+  
+  <span class='k'>end</span>
+</code></pre>
+</div>
+<p>In order to turn on only basic validations, we will have to use <code>User.force_validations(:basic)</code> method. Same way we will be able to force <strong>additional</strong> validations. If tag name is not specified, then you will still be able to turn on those validations by calling <code>User.force_validations</code>. No other validations will be forced in this case. But there is a way to do this. To turn on all test friendly validations that appear in blocks (no matter what tag name is), you can just use <code>User.force_validations(:all)</code> method. All same method signatures work for dropping validations.</p>
+
+<p>Enough with validations. Let&#8217;s now speak about callbacks. They can be same way painful. Test friendly gem turns them off during testing as well (with an ability to turn on as you need them).</p>
+<div class='highlight'><pre><code class='ruby'>  <span class='c1'># Fields present in model:</span>
+  <span class='c1'># first_name, last_name</span>
+  <span class='k'>class</span> <span class='nc'>User</span> <span class='o'>&lt;</span> <span class='no'>ActiveRecord</span><span class='o'>::</span><span class='no'>Base</span>
+    <span class='kp'>include</span> <span class='no'>NotificationEmailSender</span>
+    <span class='n'>acts_as_test_friendly</span>
+  
+    <span class='n'>test_friendly_callbacks</span> <span class='k'>do</span>
+      <span class='n'>after_create</span> <span class='ss'>:send_notification_email</span>
+    <span class='k'>end</span>
+  
+  <span class='k'>end</span>
+</code></pre>
+</div>
+<p>This way when user is created, notification emails won&#8217;t be sent in test environment. But if you want to test some callback specifically, <code>User.force_callbacks</code> should help you. Generally speaking callbacks and validations work the same way and both are capable of using tags and be turned on/off during tests.</p>
+
+<p>If you decided to turn on/off validations or callbacks all around the project in certain tests, you can benefit from <code>TestFriendly::Global.force_validations</code>, <code>TestFriendly::Global.drop_validations</code>, <code>TestFriendly::Global.force_callbacks</code>, <code>TestFriendly::Global.drop_callbacks</code> methods. They works with tags as well.</p>
+
+<p>Any comments or problems with gem - please post on <a href='https://github.com/romanoff/test_friendly'>github</a></p>
+      <div id="page-navigation"> 
+        <div class="clear">&nbsp;</div> 
+        <div class="left"> 
+          <a href="#" title="" class="no_follow">&larr; Next</a>
+        </div> 
+
+        <div class="right"> 
+          <a href="/2010/08/12/renderit-gem.html" title="RenderIt gem" class="">Previous &rarr;</a>
+        </div> 
+
+        <div class="clear">&nbsp;</div> 
+</div> 
+
+    </div>
+
+  </body>
+</html>

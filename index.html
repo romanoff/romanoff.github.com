@@ -18,6 +18,32 @@
       
 
   <div class="date">
+  <div class="day"> 1</div>
+  <div class="month">MAY</div>
+</div>
+
+
+  <h2><a class="title" href="/2012/05/01/test-friendly-gem.html">Test friendly gem</a></h2>
+
+  
+  
+    <a class="tag" href="/tags.html#tests">tests</a>
+  
+    <a class="tag" href="/tags.html#validations">validations</a>
+  
+    <a class="tag" href="/tags.html#callbacks">callbacks</a>
+  
+    <a class="tag" href="/tags.html#gem">gem</a>
+  
+
+
+
+<p>Validations in rails are easy to use. Even if some custom validations have to be created, there is generic way to do it and create <a href='http://guides.rubyonrails.org/active_record_validations_callbacks.html#performing-custom-validations'>custom validators</a>. The problems might appear when model instances have to be tested. Even though unit tests usually cover behavior of an instances, not validations, they are still executed in every test. Usually not to create valid objects evey time by hand, people use fixtures or factories. This way people don&#8217;t have to think about validations and tests are close to real environment (although probably validations don&#8217;t have to be tested at all or only custom ones). But the real problems appear when in order to create one valid object, lots of other objects have to be created first. This is fine if we check interconnections between those objects. But if not &#8230; setup becomes pretty painful. 
+<br/>
+<a href="/2012/05/01/test-friendly-gem.html">Continue reading...</a>
+
+
+  <div class="date">
   <div class="day">12</div>
   <div class="month">AUG</div>
 </div>
